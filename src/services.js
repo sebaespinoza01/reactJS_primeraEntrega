@@ -1,39 +1,64 @@
-const products =[
-    { id: "1", name: "iPhone 12", price: 799, category: "phones" },
-    { id: "2", name: "iPhone 12 Pro", price: 999, category: "phones" },
-    { id: "3", name: "iPhone 12 Pro Max", price: 1099, category: "phones" },
-    { id: "4", name: "iPad Pro", price: 799, category: "tablets" },
-    { id: "5", name: "iPad Air", price: 599, category: "tablets" },
-    { id: "6", name: "iPad", price: 329, category: "tablets" },
-    { id: "7", name: "Macbook Air", price: 999, category: "notebooks" },
-    { id: "8", name: "Macbook Pro 13-inch", price: 1299, category: "notebooks" },
-    { id: "9", name: "Macbook Pro 16-inch", price: 2399, category: "notebooks" },
-]
+import {
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    addDoc,
+    query,
+    where,
+    getFirestore,
+} from "firebase/firestore";
 
-//getproduct
+// getProduct
 export const getProduct = (id) => {
-    return new Promise((resolve, reject) =>{
-        setTimeout(() => {
-            const product = products.find((p) => p.id === id)
-            
-            if (product) {
-                resolve(product)
-            } else {
-                reject("producto no encontrado")
-            }
-        }, 1000)
-    })
-}
+    return new Promise((resolve, reject) => {
+        const db = getFirestore();
 
-//getproducts 
-export const getProducts = (category) => {
-    return new Promise((resolve,) => {
-        setTimeout(() =>{
-            const productsFiltered = category ? products.filter(product => product.category === category)
-            :products;
+        const itemDoc = doc(db, "items", id);
 
-            resolve(productsFiltered);
+        getDoc(itemDoc)
+            .then((doc) => {
+                if (doc.exists()) {
+                    resolve({ id: doc.id, ...doc.data() });
+                } else {
+                    resolve(null);
+                }
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+};
+export const getProducts = (categoryId) => {
+    return new Promise((resolve, reject) => {
+        const db = getFirestore();
 
-        }, 1000)
-    })
-}
+        const itemCollection = collection(db, "items");
+
+        let q;
+        if (categoryId) {
+            q = query(itemCollection, where("categoryId", "==", categoryId));
+        } else {
+            q = query(itemCollection);
+        }
+
+        getDocs(q)
+            .then((querySnapshot) => {
+                const products = querySnapshot.docs.map((doc) => {
+                    return { id: doc.id, ...doc.data() };
+                });
+                resolve(products);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+};
+
+export const createOrder = (orden) => {
+    const db = getFirestore();
+
+    const ordersCollection = collection(db, "orders");
+
+    return addDoc(ordersCollection, orden);
+};

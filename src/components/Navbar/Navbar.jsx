@@ -10,13 +10,13 @@ const Navbar = () => {
             
             <ul className="navbar-nav">
                 <li className="nav-item">
-                    <NavLink to="/category/phones" className="nav-link">Telefonos</NavLink>
+                    <NavLink to="/category/smartphones" className="nav-link">Telefonos</NavLink>
                 </li>
                 <li className="nav-item">
-                <NavLink to="/category/tablets" className="nav-link">Tablets</NavLink>
+                <NavLink to="/category/tablet" className="nav-link">Tablets</NavLink>
                 </li>
                 <li className="nav-item">
-                <NavLink to="/category/notebooks" className="nav-link">Notebook</NavLink>
+                <NavLink to="/category/notebook" className="nav-link">Notebook</NavLink>
                 </li>
             </ul>
 
